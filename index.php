@@ -219,11 +219,19 @@ require __DIR__ . '/includes/header.php';
                         <div class="products__features">
                             <h4 class="h-card">Key Capabilities:</h4>
                             <div class="feature-grid">
-                                <?php foreach ($pr['features'] as $f): ?>
-                                    <button type="button" class="feature">
-                                        <span><?= $f ?></span>
-                                        <span class="feature__icon"><img src="assets/icons/icon-plus-box.svg" width="20" height="20" alt=""></span>
-                                    </button>
+                                <?php foreach ($pr['features'] as $fi => $f): $fid = "feature-$i-$fi"; ?>
+                                    <div class="feature-item">
+                                        <button type="button" class="feature" aria-expanded="false" aria-controls="<?= $fid ?>">
+                                            <span><?= $f[0] ?></span>
+                                            <span class="feature__icon"><img src="assets/icons/icon-plus-box.svg" width="20" height="20" alt=""></span>
+                                        </button>
+                                        <div class="feature-panel" id="<?= $fid ?>" role="region">
+                                            <div class="feature-panel__inner">
+                                                <p><?= $f[1] ?></p>
+                                                <a class="feature-panel__link" href="contact-us.php">Enquire about <?= $pr['name'] ?> &rarr;</a>
+                                            </div>
+                                        </div>
+                                    </div>
                                 <?php endforeach; ?>
                             </div>
                         </div>

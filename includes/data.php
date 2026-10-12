@@ -117,19 +117,34 @@ $products_data = [
     [
         'name' => 'DataNote', 'tag' => 'ERP, CRM & POS in One Business Platform',
         'text' => 'DataNote brings core business functions together through ERP, CRM, and POS capabilities. It supports areas including inventory, sales, customer engagement, production, procurement, logistics, HR, and administration, helping businesses connect information and manage operations more effectively.',
-        'features' => ['ERP Framework', 'CRM Framework', 'POS', 'Mobile Apps'],
+        'features' => [
+            ['ERP Framework', 'Connects inventory, production, procurement, logistics, HR and administration so operations run from one system.'],
+            ['CRM Framework', 'Keeps sales and customer engagement together, so every conversation and follow-up lives in one place.'],
+            ['POS', 'Handles point-of-sale alongside the rest of your business data, so sales feed straight into inventory and reporting.'],
+            ['Mobile Apps', 'Access key business information and tasks from your mobile device, wherever your team works.'],
+        ],
         'img' => 'datanote-2df198.png',
     ],
     [
         'name' => 'Formezy', 'tag' => 'Smart Online Form Builder',
         'text' => 'Formezy helps businesses create, publish, and manage online forms without writing code. Collect responses, route submissions to the right teams, and keep every enquiry, registration, and feedback in one place.',
-        'features' => ['Drag & Drop Builder', 'Response Tracking', 'Workflow Rules', 'Integrations'],
+        'features' => [
+            ['Drag & Drop Builder', 'Build and publish online forms visually, with no code required.'],
+            ['Response Tracking', 'Every enquiry, registration and feedback response is collected and tracked in one place.'],
+            ['Workflow Rules', 'Route submissions to the right teams automatically as they come in.'],
+            ['Integrations', 'Connect Formezy with the tools your teams already use, so responses flow where they are needed.'],
+        ],
         'img' => 'datanote-2df198.png',
     ],
     [
         'name' => 'Docezy', 'tag' => 'Document Management Made Simple',
         'text' => 'Docezy brings your documents into one secure workspace. Store, organise, share, and track files with version control and role-based access, so teams always work on the latest version.',
-        'features' => ['Secure Storage', 'Version Control', 'Access Roles', 'Smart Search'],
+        'features' => [
+            ['Secure Storage', 'Keep all your documents together in one secure workspace.'],
+            ['Version Control', 'Track every change so teams always work on the latest version.'],
+            ['Access Roles', 'Control who can view, edit or share each file with role-based access.'],
+            ['Smart Search', 'Find the file you need quickly across everything you have stored.'],
+        ],
         'img' => 'datanote-2df198.png',
     ],
 ];

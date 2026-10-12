@@ -1,6 +1,7 @@
 <?php
 $page_title = 'About Us | Intelliworkz';
 $body_class = 'page-about';
+$no_zoom    = true;   // fluid page: opts out of the 1920px canvas scaling
 $extra_css  = ['assets/css/about.css'];
 require __DIR__ . '/includes/data-about.php';
 require __DIR__ . '/includes/header.php';

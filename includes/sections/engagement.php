@@ -28,7 +28,7 @@
         <div class="cta-band cta-band--pricing">
             <img class="cta-band__grid" src="assets/icons/grid-lines.svg" alt="">
             <div class="price-badge">
-                <img src="assets/icons/badge-price.svg" width="200" height="200" alt="Starting at $10 per hour">
+                <?php require __DIR__ . '/price-badge.php'; ?>
             </div>
             <div class="cta-band__copy">
                 <h2 class="cta-title">Flexible hourLy pricing</h2>

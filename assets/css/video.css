@@ -214,7 +214,7 @@
 .video-modal { position: fixed; inset: 0; z-index: 2000; display: grid; place-items: center; }
 .video-modal[hidden] { display: none; }
 .video-modal__backdrop { position: absolute; inset: 0; background: rgba(0, 0, 0, .82); animation: vm-fade .25s ease; }
-.video-modal__box { position: relative; width: min(1200px, 92vw); animation: vm-pop .3s cubic-bezier(.22, .8, .24, 1); }
+.video-modal__box { position: relative; width: min(1200px, calc(92vw / var(--z, 1))); animation: vm-pop .3s cubic-bezier(.22, .8, .24, 1); }
 .video-modal__title { margin-bottom: 14px; font-weight: 600; font-size: 20px; text-transform: uppercase; color: var(--c-white); }
 .video-modal__stage { position: relative; aspect-ratio: 16 / 9; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 20px 60px rgba(0, 0, 0, .6); }
 .video-modal__stage video, .video-modal__stage iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #000; }

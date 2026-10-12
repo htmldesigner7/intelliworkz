@@ -923,3 +923,50 @@
 
     sync();
 })();
+
+/* Products: "Key Capabilities" chips open a short description, one at a time per product.
+   The desktop stage has a fixed 740px canvas, so it grows to fit whatever is open (and shrinks back). */
+(function () {
+    'use strict';
+
+    var fit = function (stage) {
+        if (!stage) return;
+        var info = stage.querySelector('.product.is-active .products__info');
+        if (!info) return;
+        stage.style.height = '';                       // back to the CSS height, then grow only if needed
+        if (getComputedStyle(stage).display === 'grid') return;   // stacked (tablet/phone) layout sizes itself
+        var need = info.offsetTop + info.offsetHeight + 60;
+        if (need > stage.offsetHeight) stage.style.height = need + 'px';
+    };
+    var fitSoon = function (stage) {
+        fit(stage);
+        setTimeout(function () { fit(stage); }, 420);   // again once the open/close animation has finished
+    };
+
+    document.querySelectorAll('.feature-grid').forEach(function (grid) {
+        var stage = grid.closest('[data-products]');
+        var items = grid.querySelectorAll('.feature-item');
+        items.forEach(function (item) {
+            var btn = item.querySelector('.feature');
+            btn.addEventListener('click', function () {
+                var open = !item.classList.contains('is-open');
+                items.forEach(function (o) {
+                    o.classList.remove('is-open');
+                    o.querySelector('.feature').setAttribute('aria-expanded', 'false');
+                });
+                if (open) {
+                    item.classList.add('is-open');
+                    btn.setAttribute('aria-expanded', 'true');
+                }
+                fitSoon(stage);
+            });
+        });
+    });
+
+    document.querySelectorAll('[data-products]').forEach(function (stage) {
+        stage.querySelectorAll('.tab').forEach(function (tab) {
+            tab.addEventListener('click', function () { setTimeout(function () { fitSoon(stage); }, 0); });
+        });
+        window.addEventListener('resize', function () { fit(stage); });
+    });
+})();

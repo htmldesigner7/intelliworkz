@@ -74,6 +74,8 @@ hr { border: 0; }
 
 /* Page = Figma "col-14": vertical stack, 100px between blocks */
 .page { display: flex; flex-direction: column; align-items: center; gap: 100px; overflow-x: hidden; }
+/* "hidden" turns <main> into its own scroll container (a second scrollbar next to the window one); "clip" crops the same way without scrolling */
+@supports (overflow: clip) { .page { overflow-x: clip; overflow-y: visible; } }
 .page > section { flex-shrink: 0; }
 
 /* ---------- 3. Common components ---------- */
@@ -348,7 +350,7 @@ body.menu-locked { overflow: hidden; }
 .section-head--products { gap: 16px; }
 .section-head--products .h2 { width: 1152px; max-width: 100%; }
 .section-head--products .lead { width: 1480px; max-width: 100%; }
-.products__stage { position: relative; width: 100%; height: 740px; overflow: hidden; background: linear-gradient(135deg, #FAFAFA 2%, #FEFEFE 100%); }
+.products__stage { position: relative; width: 100%; height: 740px; overflow: hidden; transition: height .35s ease; background: linear-gradient(135deg, #FAFAFA 2%, #FEFEFE 100%); }
 .product { position: absolute; inset: 0; opacity: 0; visibility: hidden; transform: translateY(14px); transition: opacity .5s ease, transform .5s ease, visibility .5s; }
 .product.is-active { opacity: 1; visibility: visible; transform: none; }
 .products__img { position: absolute; left: 687.86px; top: 47.34px; width: 799.88px; height: 607.56px; }
@@ -358,8 +360,9 @@ body.menu-locked { overflow: hidden; }
 .products__tag { font-weight: 500; font-size: 16px; line-height: normal; color: var(--c-red); margin-top: 6px; }
 .products__features { display: flex; flex-direction: column; gap: 14px; }
 .products__features .h-card { color: var(--c-ink); }
-.feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.feature { display: flex; align-items: center; justify-content: space-between; padding: 12px 12px 12px 20px; background: var(--c-body-gray); border-radius: 5px; box-shadow: 0 2px 2px rgba(0, 0, 0, .1); font-size: 16px; line-height: 24px; color: var(--c-white); }
+.feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-items: start; }
+.feature-item { min-width: 0; }
+.feature { width: 100%; text-align: left; transition: background-color .3s, border-radius .3s; display: flex; align-items: center; justify-content: space-between; padding: 12px 12px 12px 20px; background: var(--c-body-gray); border-radius: 5px; box-shadow: 0 2px 2px rgba(0, 0, 0, .1); font-size: 16px; line-height: 24px; color: var(--c-white); }
 .feature__icon { display: grid; place-items: center; width: 32px; height: 32px; border: 1px solid var(--c-border-gray); border-radius: 4px; }
 .products__tabs { position: absolute; left: 1632px; top: 384px; display: flex; flex-direction: column; gap: 12px; }
 .tab { z-index: 2; position: relative; cursor: pointer; transition: color .25s; display: flex; align-items: center; justify-content: flex-end; gap: 16px; width: 228px; height: 34px; padding: 4px 0 4px 16px; font-size: 18px; line-height: 26px; color: var(--c-body-gray); }
@@ -493,3 +496,16 @@ body.menu-locked { overflow: hidden; }
 /* Footer variant used on service pages (gradient top stroke, outlined phone icon) */
 .site-footer--service .site-footer__inner { border-top: 4px solid; border-image: linear-gradient(136deg, #9DE7FF 0%, #F6B7E8 100%) 1; }
 .site-footer--service .bottom-bar { background: rgba(255, 255, 255, .06); }
+
+/* Product "Key Capabilities": each chip opens a short description (one at a time) */
+.feature:hover { background: #555; }
+.feature__icon img { transition: transform .35s cubic-bezier(.22, .8, .24, 1); }
+.feature-item.is-open .feature { background: var(--c-red); border-radius: 5px 5px 0 0; }
+.feature-item.is-open .feature__icon img { transform: rotate(45deg); }
+.feature-panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .35s ease; }
+.feature-item.is-open .feature-panel { grid-template-rows: 1fr; }
+.feature-panel__inner { min-height: 0; overflow: hidden; background: var(--c-white); border: 1px solid transparent; border-top: 0; border-radius: 0 0 5px 5px; }
+.feature-item.is-open .feature-panel__inner { border-color: var(--c-border-gray); }
+.feature-panel__inner p { padding: 14px 16px 6px; font-size: 15px; line-height: 22px; color: var(--c-body-gray); }
+.feature-panel__link { display: inline-block; padding: 0 16px 14px; font-weight: 500; font-size: 15px; color: var(--c-red); transition: transform .25s; }
+.feature-panel__link:hover { transform: translateX(4px); }
