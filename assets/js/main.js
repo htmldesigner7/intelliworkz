@@ -484,7 +484,10 @@
     var busy = false, paused = false;
 
     var gap = function () { return parseFloat(getComputedStyle(track).columnGap) || 40; };
-    var stepPx = function () { return track.children[0].offsetWidth + gap(); };
+    var stepPx = function () {
+        var first = Array.prototype.filter.call(track.children, function (t) { return !t.hidden; })[0] || track.children[0];
+        return first.offsetWidth + gap();
+    };
 
     var forward = function (dir) {
         if (busy) return;
@@ -516,6 +519,21 @@
         track.addEventListener('transitionend', done);
         setTimeout(done, 700);
     };
+
+    /* Optional header arrows ([data-examples-prev/next]) and filter tabs ([data-filter] + tile data-cats) */
+    section.querySelectorAll('[data-examples-prev]').forEach(function (b) { b.addEventListener('click', function () { forward(-1); }); });
+    section.querySelectorAll('[data-examples-next]').forEach(function (b) { b.addEventListener('click', function () { forward(1); }); });
+    var fTabs = section.querySelectorAll('.filter-tab');
+    fTabs.forEach(function (tab) {
+        tab.addEventListener('click', function () {
+            var key = tab.getAttribute('data-filter');
+            fTabs.forEach(function (t) { t.classList.toggle('is-active', t === tab); });
+            Array.prototype.forEach.call(track.children, function (tile) {
+                var cats = (tile.getAttribute('data-cats') || '').split(' ');
+                tile.hidden = key !== 'all' && cats.indexOf(key) === -1;
+            });
+        });
+    });
 
     /* Autoplay */
     var delay = parseInt(section.getAttribute('data-autoplay'), 10) || 2600;
@@ -667,4 +685,241 @@
         };
         toggleBtn.addEventListener('click', function () { setState(!exploded); });
     }
+})();
+
+/* SEO page: "Selected SEO Work" strip — filter tabs, endless prev/next (header + strip arrows),
+   and click-to-feature. Same mechanic as the 3D page gallery above. */
+(function () {
+    'use strict';
+
+    var section = document.querySelector('.seo-pf, .ppt-pf');
+    if (!section) return;
+    var track = section.querySelector('[data-gallery-track]');
+    var tabs = section.querySelectorAll('.filter-tab');
+    var tiles = track ? Array.prototype.slice.call(track.children) : [];
+    if (!track) return;
+
+    tabs.forEach(function (tab) {
+        tab.addEventListener('click', function () {
+            var key = tab.getAttribute('data-filter');
+            tabs.forEach(function (t) { t.classList.toggle('is-active', t === tab); });
+            tiles.forEach(function (tile) {
+                var cats = (tile.getAttribute('data-cats') || '').split(' ');
+                tile.hidden = key !== 'all' && cats.indexOf(key) === -1;
+            });
+        });
+    });
+
+    var busy = false;
+    var slide = function (dir) {
+        if (busy) return;
+        busy = true;
+        var gap = parseFloat(getComputedStyle(track).columnGap) || 24;
+        var first = Array.prototype.filter.call(track.children, function (t) { return !t.hidden; })[0];
+        var step = (first ? first.offsetWidth : 106.67) + gap;
+        track.classList.add('is-sliding');
+
+        if (dir > 0) {
+            track.style.transform = 'translateX(' + (-step) + 'px)';
+        } else {
+            track.insertBefore(track.lastElementChild, track.firstElementChild);
+            track.classList.remove('is-sliding');
+            track.style.transform = 'translateX(' + (-step) + 'px)';
+            void track.offsetWidth;
+            track.classList.add('is-sliding');
+            track.style.transform = 'translateX(0)';
+        }
+
+        var finished = false;
+        var done = function () {
+            if (finished) return;
+            finished = true;
+            track.removeEventListener('transitionend', done);
+            track.classList.remove('is-sliding');
+            if (dir > 0) track.appendChild(track.firstElementChild);
+            track.style.transform = 'translateX(0)';
+            busy = false;
+        };
+        track.addEventListener('transitionend', done);
+        setTimeout(done, 600);
+    };
+    section.querySelectorAll('[data-gallery-prev]').forEach(function (b) { b.addEventListener('click', function () { slide(-1); }); });
+    section.querySelectorAll('[data-gallery-next]').forEach(function (b) { b.addEventListener('click', function () { slide(1); }); });
+
+    tiles.forEach(function (tile) {
+        tile.addEventListener('click', function () {
+            tiles.forEach(function (t) { t.classList.toggle('is-featured', t === tile); });
+        });
+    });
+})();
+
+/* Packaging page: filter tabs for the masonry grid (tiles carry a space-separated data-cats list) */
+(function () {
+    'use strict';
+
+    var tabsWrap = document.querySelector('[data-pk-tabs]');
+    var grid = document.querySelector('[data-pk-grid]');
+    if (!tabsWrap || !grid) return;
+    var tabs = tabsWrap.querySelectorAll('.filter-tab');
+    var tiles = grid.querySelectorAll('.pk-tile');
+
+    tabs.forEach(function (tab) {
+        tab.addEventListener('click', function () {
+            var key = tab.getAttribute('data-filter');
+            tabs.forEach(function (t) { t.classList.toggle('is-active', t === tab); });
+            tiles.forEach(function (tile) {
+                var cats = (tile.getAttribute('data-cats') || '').split(' ');
+                tile.hidden = key !== 'all' && cats.indexOf(key) === -1;
+            });
+        });
+    });
+})();
+
+/* Contact page: INDIA / USA / DUBAI office selector */
+(function () {
+    'use strict';
+
+    var wrap = document.querySelector('[data-offices]');
+    if (!wrap) return;
+    var tabs = wrap.querySelectorAll('[data-office]');
+    var panels = wrap.querySelectorAll('[data-office-panel]');
+
+    tabs.forEach(function (tab) {
+        tab.addEventListener('click', function () {
+            var key = tab.getAttribute('data-office');
+            tabs.forEach(function (t) { t.classList.toggle('is-active', t === tab); });
+            panels.forEach(function (p) { p.hidden = p.getAttribute('data-office-panel') !== key; });
+        });
+    });
+})();
+
+/* About page: scroll reveal + capabilities slider (tabs, arrows, progress, snap sync) */
+(function () {
+    'use strict';
+
+    var root = document.querySelector('.ab');
+    if (!root) return;
+
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    document.body.classList.add('ab-js');
+
+    /* Reveal: add .is-in once an element scrolls into view */
+    var items = root.querySelectorAll('[data-reveal]');
+    if (reduce || !('IntersectionObserver' in window)) {
+        items.forEach(function (el) { el.classList.add('is-in'); });
+    } else {
+        var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (!entry.isIntersecting) return;
+                entry.target.classList.add('is-in');
+                io.unobserve(entry.target);
+            });
+        }, { threshold: 0.15, rootMargin: '0px 0px -6% 0px' });
+        items.forEach(function (el) { io.observe(el); });
+    }
+
+    /* SMIL travellers in the SVG maps don't respond to CSS, so stop them for reduced motion */
+    if (reduce) {
+        root.querySelectorAll('svg').forEach(function (svg) {
+            if (svg.pauseAnimations) svg.pauseAnimations();
+        });
+    }
+
+    /* How we think: the stack builds up plate by plate while the matching step lights.
+       Hover / focus / click a step to jump to it; autoplay only runs while the section is on screen. */
+    var think = root.querySelector('[data-think]');
+    if (think) {
+        var plates = think.querySelectorAll('.ab-plate');
+        var tsteps = think.querySelectorAll('[data-think-step]');
+        var cur = 0, timer = null;
+
+        var setStep = function (i) {
+            cur = i;
+            plates.forEach(function (p, k) { p.classList.toggle('is-active', k === i); p.classList.toggle('is-done', k < i); });
+            tsteps.forEach(function (s, k) { s.classList.toggle('is-active', k === i); s.classList.toggle('is-done', k < i); });
+        };
+        var stopPlay = function () { clearInterval(timer); timer = null; };
+        var startPlay = function () {
+            if (reduce || timer) return;
+            timer = setInterval(function () { setStep((cur + 1) % plates.length); }, 2300);
+        };
+
+        tsteps.forEach(function (s, i) {
+            ['mouseenter', 'focus', 'click'].forEach(function (ev) {
+                s.addEventListener(ev, function () { stopPlay(); setStep(i); });
+            });
+            s.addEventListener('mouseleave', startPlay);
+            s.addEventListener('blur', startPlay);
+        });
+
+        setStep(0);
+        if ('IntersectionObserver' in window) {
+            new IntersectionObserver(function (entries) {
+                entries.forEach(function (e) { if (e.isIntersecting) startPlay(); else stopPlay(); });
+            }, { threshold: 0.3 }).observe(think);
+        } else {
+            startPlay();
+        }
+    }
+
+    /* Capabilities slider */
+    var cap = root.querySelector('[data-caps]');
+    if (!cap) return;
+    var track = cap.querySelector('[data-caps-track]');
+    var panels = Array.prototype.slice.call(track.children);
+    var tabs = cap.querySelectorAll('[data-caps-tab]');
+    var prev = cap.querySelector('[data-caps-prev]');
+    var next = cap.querySelector('[data-caps-next]');
+    var bar = cap.querySelector('[data-caps-bar]');
+    var count = cap.querySelector('[data-caps-count]');
+    var active = -1;
+
+    var pad = function () { return parseFloat(getComputedStyle(track).paddingLeft) || 0; };
+    var nearest = function () {
+        var left = track.scrollLeft + pad();
+        var best = 0, min = Infinity;
+        panels.forEach(function (p, i) {
+            var d = Math.abs(p.offsetLeft - left);
+            if (d < min) { min = d; best = i; }
+        });
+        /* at the very end the last panel can't reach the snap point: still count it as current */
+        if (track.scrollLeft + track.clientWidth >= track.scrollWidth - 2) best = panels.length - 1;
+        return best;
+    };
+    var go = function (i) {
+        i = Math.max(0, Math.min(panels.length - 1, i));
+        track.scrollTo({ left: panels[i].offsetLeft - pad(), behavior: reduce ? 'auto' : 'smooth' });
+    };
+    var sync = function () {
+        var i = nearest();
+        if (i === active) return;
+        active = i;
+        panels.forEach(function (p, k) { p.classList.toggle('is-active', k === i); });
+        tabs.forEach(function (t, k) {
+            t.classList.toggle('is-active', k === i);
+            t.setAttribute('aria-selected', k === i ? 'true' : 'false');
+        });
+        count.textContent = ('0' + (i + 1)).slice(-2);
+        bar.style.width = ((i + 1) / panels.length * 100) + '%';
+        prev.disabled = i === 0;
+        next.disabled = i === panels.length - 1;
+    };
+
+    var ticking = false;
+    track.addEventListener('scroll', function () {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { ticking = false; sync(); });
+    }, { passive: true });
+    window.addEventListener('resize', function () { active = -1; sync(); });
+
+    prev.addEventListener('click', function () { go(active - 1); });
+    next.addEventListener('click', function () { go(active + 1); });
+    tabs.forEach(function (t, i) { t.addEventListener('click', function () { go(i); }); });
+    track.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowRight') { e.preventDefault(); go(active + 1); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); go(active - 1); }
+    });
+
+    sync();
 })();

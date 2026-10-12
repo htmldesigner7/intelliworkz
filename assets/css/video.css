@@ -38,8 +38,8 @@
 .lead-form__row { display: flex; gap: 24px; }
 .field { flex: 1; display: flex; flex-direction: column; gap: 6px; }
 .field span { font-weight: 500; font-size: 15px; line-height: 18px; color: var(--c-border-gray); }
-.field input, .field textarea { width: 100%; padding: 14px; background: transparent; color: var(--c-white); border: 1px solid var(--c-border-gray); border-radius: 5px; font: 500 17px/20px var(--font-body); outline: none; resize: none; transition: border-color .2s, box-shadow .2s; }
-.field textarea { padding-bottom: 56px; }
+.field input, .field textarea { width: 100%; padding: 13px 14px; background: transparent; color: var(--c-white); border: 1px solid var(--c-border-gray); border-radius: 5px; font: 500 17px/20px var(--font-body); outline: none; resize: none; transition: border-color .2s, box-shadow .2s; }
+.field textarea { padding-bottom: 55px; }
 .field input::placeholder, .field textarea::placeholder { color: var(--c-divider-gray); }
 .field input:focus, .field textarea:focus { border-color: var(--c-red); box-shadow: 0 0 0 3px rgba(196, 32, 48, .25); }
 .btn--block { width: 100%; }

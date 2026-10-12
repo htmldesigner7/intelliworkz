@@ -75,7 +75,7 @@
 /* V-Ray / Blender ship as white line-art (no fill of their own) meant to sit directly on the
    dark strip photo, so they skip the square photo-crop treatment the other tool icons use. */
 .td-tools .ve-tool--mark img { width: auto; height: 54px; object-fit: contain; border-radius: 0; }
-.td-tool-formats__img { width: 122px; height: auto; max-width: none; object-fit: contain; }
+.td-tools .td-tool-formats__img { width: 180px; height: auto; max-width: none; object-fit: contain; }
 
 /* ---------- Services accordion image (page has no magazine.css, so this needs its own width rule
    — without it the unconstrained <img> forces the accordion column down to a sliver) ---------- */
@@ -89,3 +89,10 @@
 .td-step__no span { width: 63px; flex: none; height: 0; border-top: 1.5px solid var(--c); }
 .td-step h3 { font-weight: 500; font-size: 24px; line-height: normal; color: var(--c-near-black); }
 .td-step p { font-size: 16px; line-height: 24px; color: var(--c-body-gray); }
+
+/* Tools strip, as in Figma node 6:349: photo is a 1960x932 stretch of the cropped export, with a black (not white) fade on top */
+.td-tools .ve-tools__bg { left: -20px; top: 28px; width: 1960px; height: 932px; }
+.td-tools::after { left: -20px; top: -257px; width: 1960px; height: 1103.09px; background: linear-gradient(180deg, #000 28%, rgba(0, 0, 0, 0) 44%); }
+.td-tools .td-tool--lg img { height: 72px; }
+.td-tool__tile { display: grid; place-items: center; flex: none; width: 72px; height: 72px; background: #001834; border-radius: 10px; }
+.td-tools .td-tool__tile img { width: 32.75px; height: 25px; border-radius: 0; object-fit: contain; }
